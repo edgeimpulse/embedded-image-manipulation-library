@@ -23,10 +23,31 @@
 
 #include <stdio.h>
 
-#include "../eiml.h"
+#include "../../eiml.h"
 
 int main (int argc, char *argv[])
 {
-    // Crop test
-    printf("Hello\r\n");
+    // Define test image pattern
+    unsigned char img[] = { 
+                            255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 
+                            255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 0, 0, 0, 255, 0, 0, 255, 
+                            255, 255, 0, 255, 255, 0, 0, 255, 255, 0, 255, 255, 255, 0, 255, 255, 0, 255, 
+                            0, 0, 0, 51, 51, 51, 102, 102, 102, 153, 153, 153, 204, 204, 204, 255, 255, 255, 
+                            100, 0, 0, 50, 50, 0, 20, 20, 0, 0, 10, 10, 1, 2, 3, 1, 1, 2, 
+                            50, 50, 0, 100, 0, 0, 0, 10, 10, 20, 20, 0, 1, 1, 2, 1, 2, 3 
+                            };
+
+    // Define eiml_image
+    eiml_image test_image;
+    test_image.width = 6;
+    test_image.height = 6;
+    test_image.color_space = EIML_RGB888;
+    test_image.image = img;
+
+    // Test: get pixel value
+    eiml_pixel pix;
+    eiml_get_pixel(&test_image, &pix, 5, 5);
+    printf("%i, %i, %i\r\n", pix.r, pix.g, pix.b);
+
+    return 0;
 }

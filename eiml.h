@@ -45,23 +45,46 @@ typedef enum
 
 typedef struct
 {
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+} eiml_pixel;
+
+
+typedef struct
+{
     unsigned int width;
     unsigned int height;
     eiml_color_space color_space;
     unsigned char *image;
 } eiml_image;
 
+// Public functions
+unsigned int eiml_get_bytes_per_pixel(eiml_color_space color_space);
+eiml_ret eiml_convert(eiml_image *image_in, eiml_image *image_out);
+eiml_ret eiml_crop(eiml_image *image_in, 
+                    eiml_image *image_out, 
+                    unsigned int x,
+                    unsigned int y,
+                    unsigned int width,
+                    unsigned int height);
+static eiml_ret eiml_get_pixel(eiml_image *image_in,
+                                    eiml_pixel *pixel_out,
+                                    unsigned int x, 
+                                    unsigned int y);
+
 /**
  * @brief Get the number of bytes per pixel based on the provided color space
  * 
  * @param color_space One of the supported color space options
- * @return Number of bytes per pixel
+ * @return int Number of bytes per pixel
  */
 unsigned int eiml_get_bytes_per_pixel(eiml_color_space color_space)
 {
     unsigned int bytes_per_pixel;
 
-    switch (color_space) {
+    switch (color_space) 
+    {
         case EIML_GRAYSCALE:
             bytes_per_pixel = 1;
             break;
@@ -82,39 +105,24 @@ unsigned int eiml_get_bytes_per_pixel(eiml_color_space color_space)
 }
 
 /**
- * @brief Allocate memory for the given image struct. Note: uses malloc()
+ * @brief Convert one image color space format to another
  * 
- * @param image Input/output image struct with all fields filled but *image
- * @return eiml_ret Return status code (EIML_OK or EIML_ERROR)
+ * @param image_in Image in original color format
+ * @param image_out Output image after color space conversion
+ * @return eiml_ret EIML_ERROR on error, EIML_OK otherwise
  */
-// eiml_ret eiml_init_image(eiml_image *image)
-// {
-//     unsigned int bytes_per_pixel;
+eiml_ret eiml_convert(eiml_image *image_in, eiml_image *image_out)
+{
+    // Check that input and output dimensions match
+    if ((image_in->width != image_out->width) || 
+        (image_in->height != image_out->height))
+    {
+        return EIML_ERROR;
+    }
 
-//     // Check to make sure parameters are set
-//     if (image->width == 0) || (image->height == 0)
-//     {
-//         return EIML_ERROR;
-//     }
-
-//     // Get number of bytes per pixel
-//     bytes_per_pixel eiml_get_bytes_per_pixel(image->color_space);
-
-//     // Allocate image buffer
-//     image->image = (unsigned char *)malloc(image->width * image->height * \
-//                                             bytes_per_pixel * \
-//                                             sizeof(unsigned char));
-
-//     // Check allocation
-//     if (image->image != NULL)
-//     {
-//         return EIML_OK;
-//     }
-//     else
-//     {
-//         return EIML_ERROR;
-//     }
-// }
+    // TODO: Use get_pixel to get RGB, convert to appropriate target format
+    return EIML_ERROR;
+}
 
 /**
  * @brief Crops input image with x/y and width/height, copies to output image
@@ -129,7 +137,7 @@ unsigned int eiml_get_bytes_per_pixel(eiml_color_space color_space)
  * @param image_out Cropped image
  * @param x Where to crop (x) on input image
  * @param y Where to crop (y) on input image
- * @return eiml_ret 
+ * @return eiml_ret EIML_ERROR on error, EIML_OK otherwise
  */
 eiml_ret eiml_crop(eiml_image *image_in, 
                     eiml_image *image_out, 
@@ -147,6 +155,70 @@ eiml_ret eiml_crop(eiml_image *image_in,
 
 
     return EIML_OK;
+}
+
+/**
+ * @brief Get RGB values from a pixel given at (x, y)
+ * 
+ * @param image_in Input image
+ * @param pixel_out Pixel (R, G, B) values
+ * @param x X coordinate of pixel value
+ * @param y Y coordinate of pixel value
+ * @return eiml_ret EIML_ERROR on error, EIML_OK otherwise
+ */
+static eiml_ret eiml_get_pixel(eiml_image *image_in,
+                                    eiml_pixel *pixel_out,
+                                    unsigned int x, 
+                                    unsigned int y)
+{
+    int bytes_per_pixel;
+    unsigned int offset;
+    eiml_ret ret_val = EIML_OK;
+
+    // Check for out of bounds access
+    if ((x > image_in->width) || (y > image_in->height))
+    {
+        return EIML_ERROR;
+    }
+
+    // Get bytes per pixel
+    bytes_per_pixel = eiml_get_bytes_per_pixel(image_in->color_space);
+
+    switch (image_in->color_space)
+    {
+        // Grayscale: copy pixel values to each channel
+        case EIML_GRAYSCALE:
+            pixel_out->r = image_in->image[(y * image_in->width) + x];
+            pixel_out->g = pixel_out->r;
+            pixel_out->b = pixel_out->r;
+            break;
+
+        // YUV422
+        case EIML_YUV422:
+            // TODO
+            ret_val = EIML_ERROR;
+            break;
+
+        // RGB565
+        case EIML_RGB565:
+            // TODO
+            ret_val = EIML_ERROR;
+            break;
+
+        // RGB888: copy out individual pixel values
+        case EIML_RGB888:
+            offset = ((y * image_in->width) + x) * bytes_per_pixel;
+            pixel_out->r = image_in->image[offset + 0];
+            pixel_out->g = image_in->image[offset + 1];
+            pixel_out->b = image_in->image[offset + 2];
+            break;
+
+        // Default case: unsupported format
+        default:
+            ret_val = EIML_ERROR;
+    }
+
+    return ret_val;
 }
 
 #endif // _EIML_H_
