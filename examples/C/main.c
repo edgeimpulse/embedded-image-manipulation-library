@@ -23,7 +23,7 @@
 
 #include <stdio.h>
 
-#include "../../eiml.h"
+#include "../../include/eiml.h"
 
 int main (int argc, char *argv[])
 {

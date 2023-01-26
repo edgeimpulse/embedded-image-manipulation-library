@@ -193,6 +193,8 @@ unsigned int encode_base64(unsigned char input[], unsigned int input_length, uns
       output[3] = '=';
       output[4] = '\0';
       break;
+    default:
+      break;
   }
   
   return encode_base64_length(input_length);
@@ -222,6 +224,8 @@ unsigned int decode_base64(unsigned char input[], unsigned int input_length, uns
     case 2:
       output[0] = base64_to_binary(input[0]) << 2 | base64_to_binary(input[1]) >> 4;
       output[1] = base64_to_binary(input[1]) << 4 | base64_to_binary(input[2]) >> 2;
+      break;
+    default:
       break;
   }
   

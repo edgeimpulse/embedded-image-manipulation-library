@@ -27,8 +27,6 @@
 #ifndef _EIML_H_
 #define _EIML_H_
 
-#include "base64.h"
-
 typedef enum
 {
     EIML_OK = 0,
@@ -40,7 +38,7 @@ typedef enum
     EIML_GRAYSCALE = 0,
     EIML_YUV422 = 1,
     EIML_RGB565 = 2,
-    EIML_RGB888 = 3,
+    EIML_RGB888 = 3
 } eiml_color_space;
 
 typedef struct
@@ -68,7 +66,7 @@ eiml_ret eiml_crop(eiml_image *image_in,
                     unsigned int y,
                     unsigned int width,
                     unsigned int height);
-static eiml_ret eiml_get_pixel(eiml_image *image_in,
+eiml_ret eiml_get_pixel(eiml_image *image_in,
                                     eiml_pixel *pixel_out,
                                     unsigned int x, 
                                     unsigned int y);
@@ -139,23 +137,23 @@ eiml_ret eiml_convert(eiml_image *image_in, eiml_image *image_out)
  * @param y Where to crop (y) on input image
  * @return eiml_ret EIML_ERROR on error, EIML_OK otherwise
  */
-eiml_ret eiml_crop(eiml_image *image_in, 
-                    eiml_image *image_out, 
-                    unsigned int x,
-                    unsigned int y,
-                    unsigned int width,
-                    unsigned int height)
-{
-    // TODO: implement this function
+// eiml_ret eiml_crop(eiml_image *image_in, 
+//                     eiml_image *image_out, 
+//                     unsigned int x,
+//                     unsigned int y,
+//                     unsigned int width,
+//                     unsigned int height)
+// {
+//     // TODO: implement this function
 
-    // Check: color spaces match
+//     // Check: color spaces match
 
-    // Check: width/height + x/y does not extend beyond input image
+//     // Check: width/height + x/y does not extend beyond input image
 
 
 
-    return EIML_OK;
-}
+//     return EIML_OK;
+// }
 
 /**
  * @brief Get RGB values from a pixel given at (x, y)
@@ -166,12 +164,12 @@ eiml_ret eiml_crop(eiml_image *image_in,
  * @param y Y coordinate of pixel value
  * @return eiml_ret EIML_ERROR on error, EIML_OK otherwise
  */
-static eiml_ret eiml_get_pixel(eiml_image *image_in,
-                                    eiml_pixel *pixel_out,
-                                    unsigned int x, 
-                                    unsigned int y)
+eiml_ret eiml_get_pixel(eiml_image *image_in,
+                        eiml_pixel *pixel_out,
+                        unsigned int x, 
+                        unsigned int y)
 {
-    int bytes_per_pixel;
+    unsigned int bytes_per_pixel;
     unsigned int offset;
     eiml_ret ret_val = EIML_OK;
 
