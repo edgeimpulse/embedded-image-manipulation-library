@@ -62,5 +62,9 @@ cpputest/
 cpputest*/
 cpputest*
 
+# Specific unit tests
+eiml_tests
+main
+
 # Jupyter Notebooks
 .ipynb_checkpoints/
