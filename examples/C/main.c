@@ -42,7 +42,7 @@ int main (int argc, char *argv[])
     test_image.width = 6;
     test_image.height = 6;
     test_image.color_space = EIML_RGB888;
-    test_image.image = img;
+    test_image.pixels = img;
 
     // Test: get pixel value
     eiml_pixel pix;

@@ -1,10 +1,14 @@
-/* Embedded Image Manipulation Library
+/**
+ * @file eiml.h
+ * @brief Embedded Image Manipulation Library include file
  * 
- * Include this and base64.h in your project to perform basic image manipulation
- * functions such as scaling, cropping, and color conversion.
+ * Include this file in your project to perform basic image manipulation
+ * functions, such as scaling, cropping, and color conversion.
  * 
- * Copyright (c) 2023 EdgeImpulse Inc.
- *
+ * @author Shawn Hymel (EdgeImpulse Inc.)
+ * @copyright Copyright (c) 2023 EdgeImpulse Inc. (Apache-2.0)
+ * @see https://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -54,7 +58,7 @@ typedef struct
     unsigned int width;
     unsigned int height;
     eiml_color_space color_space;
-    unsigned char *image;
+    unsigned char *pixels;
 } eiml_image;
 
 // Public functions
@@ -137,23 +141,21 @@ eiml_ret eiml_convert(eiml_image *image_in, eiml_image *image_out)
  * @param y Where to crop (y) on input image
  * @return eiml_ret EIML_ERROR on error, EIML_OK otherwise
  */
-// eiml_ret eiml_crop(eiml_image *image_in, 
-//                     eiml_image *image_out, 
-//                     unsigned int x,
-//                     unsigned int y,
-//                     unsigned int width,
-//                     unsigned int height)
-// {
-//     // TODO: implement this function
+eiml_ret eiml_crop(eiml_image *image_in, 
+                    eiml_image *image_out, 
+                    unsigned int x,
+                    unsigned int y,
+                    unsigned int width,
+                    unsigned int height)
+{
+    // TODO: implement this function
 
-//     // Check: color spaces match
+    // Check: color spaces match
 
-//     // Check: width/height + x/y does not extend beyond input image
+    // Check: width/height + x/y does not extend beyond input image
 
-
-
-//     return EIML_OK;
-// }
+    return EIML_OK;
+}
 
 /**
  * @brief Get RGB values from a pixel given at (x, y)
@@ -186,7 +188,7 @@ eiml_ret eiml_get_pixel(eiml_image *image_in,
     {
         // Grayscale: copy pixel values to each channel
         case EIML_GRAYSCALE:
-            pixel_out->r = image_in->image[(y * image_in->width) + x];
+            pixel_out->r = image_in->pixels[(y * image_in->width) + x];
             pixel_out->g = pixel_out->r;
             pixel_out->b = pixel_out->r;
             break;
@@ -206,9 +208,9 @@ eiml_ret eiml_get_pixel(eiml_image *image_in,
         // RGB888: copy out individual pixel values
         case EIML_RGB888:
             offset = ((y * image_in->width) + x) * bytes_per_pixel;
-            pixel_out->r = image_in->image[offset + 0];
-            pixel_out->g = image_in->image[offset + 1];
-            pixel_out->b = image_in->image[offset + 2];
+            pixel_out->r = image_in->pixels[offset + 0];
+            pixel_out->g = image_in->pixels[offset + 1];
+            pixel_out->b = image_in->pixels[offset + 2];
             break;
 
         // Default case: unsupported format
